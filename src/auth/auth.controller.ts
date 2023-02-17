@@ -10,6 +10,7 @@ import {
   UseGuards,
   UnauthorizedException,
   ConflictException,
+  Version,
 } from '@nestjs/common';
 import {
   ApiCreatedResponse,
@@ -18,7 +19,6 @@ import {
   ApiHeader,
   ApiBody,
   ApiResponse,
-  ApiParam,
 } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 import { AuthService } from 'src/auth/auth.service';
@@ -37,6 +37,7 @@ import { UpdateUserDto } from './dto/updateUser.dto';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @Version('1')
   @Post()
   @ApiOperation({ summary: 'Login', description: 'Social login' })
   @ApiBody({
@@ -67,6 +68,7 @@ export class AuthController {
     return { nickname, userId, accessToken };
   }
 
+  @Version('1')
   @Get('logout')
   @ApiOperation({ summary: 'Logout', description: 'Logout' })
   @ApiHeader({ name: 'Authorization', description: 'auth token' })
@@ -83,6 +85,7 @@ export class AuthController {
     res.send();
   }
 
+  @Version('1')
   @Post('refresh')
   @UseGuards(JwtRefreshGuard)
   @ApiOperation({
@@ -126,6 +129,7 @@ export class AuthController {
     }
   }
 
+  @Version('1')
   @Patch('/:nickname')
   @ApiOperation({
     summary: 'Modify Nickname',
@@ -149,6 +153,7 @@ export class AuthController {
     await this.authService.updateNickname(user, updateUserDto.nickname);
   }
 
+  @Version('1')
   @Get('/')
   @UseGuards(AuthGuard)
   async getUser(@GetUser() user: User): Promise<User> {

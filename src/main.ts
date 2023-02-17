@@ -3,7 +3,7 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import * as cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 import { winstonLogger } from './utils/logger';
-import { Logger } from '@nestjs/common';
+import { Logger, VersioningType } from '@nestjs/common';
 
 async function bootstrap() {
   const logger = new Logger();
@@ -32,6 +32,10 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api-docs', app, document);
   const port = process.env.PORT || 8000;
+  // 전체 versioning 설정
+  app.enableVersioning({
+    type: VersioningType.URI,
+  });
   await app.listen(port);
   logger.log(`${process.env.NODE_ENV} App Listening at localhost:${port}`);
 }

@@ -6,6 +6,7 @@ import {
   Param,
   NotFoundException,
   Query,
+  Version,
 } from '@nestjs/common';
 import {
   ApiCreatedResponse,
@@ -33,6 +34,7 @@ export class PlaceController {
     private readonly placeInfoService: PlaceInfoService,
   ) {}
 
+  @Version('1')
   @Get('/exists/:kakaoId')
   @ApiOperation({
     summary: 'isExists',
@@ -58,11 +60,13 @@ export class PlaceController {
     };
   }
 
+  @Version('1')
   @Get('/')
   async findByAll(): Promise<Place[]> {
     return await this.placeService.findAll();
   }
 
+  @Version('1')
   @Post('/')
   @ApiOperation({ summary: 'Create', description: 'create place data' })
   @ApiResponse({
@@ -79,6 +83,7 @@ export class PlaceController {
     return place;
   }
 
+  @Version('1')
   @Get('/info/:id')
   @ApiOperation({ summary: 'GetPlaceInfo', description: '장소 상세 정보 조회' })
   @ApiParam({
@@ -96,6 +101,7 @@ export class PlaceController {
     return placeInfo;
   }
 
+  @Version('1')
   @Get('/reviewed')
   @ApiOperation({
     summary: 'GetPlaces',
@@ -112,6 +118,7 @@ export class PlaceController {
     return places;
   }
 
+  @Version('1')
   @Get('/detail/:id')
   @ApiOperation({
     summary: 'Get Place Details',
@@ -135,6 +142,7 @@ export class PlaceController {
     return await this.placeService.findPlaceDetail(id);
   }
 
+  @Version('1')
   @Get('/search/:kakaoId')
   @ApiOperation({
     summary: 'Get Place Search',
@@ -159,6 +167,7 @@ export class PlaceController {
     return result;
   }
 
+  @Version('1')
   @ApiOperation({
     summary: 'Keyword Search',
     description: '키워드 검색 qs 파싱후 전달',
@@ -176,6 +185,7 @@ export class PlaceController {
     return await this.placeService.placeKeywordSearch(parseKeyword);
   }
 
+  @Version('1')
   @Get('/:kakaoId')
   async findByKakaoId(@Param('kakaoId') kakaoId: string) {
     const isExists = await this.placeService.isExistsByKakaoId(kakaoId);

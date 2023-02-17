@@ -6,6 +6,7 @@ import {
   UseInterceptors,
   Get,
   Param,
+  Version,
 } from '@nestjs/common';
 import { PlaceReviewService } from './place_review.service';
 import { CreatePlaceReviewDto } from './dto/create.place_review.dto';
@@ -28,7 +29,6 @@ import { TransactionManager } from 'src/decorator/transaction.decorator';
 import { EntityManager } from 'typeorm';
 import { PlaceReview } from './Entity/place_review.entity';
 import { PlaceStatsService } from 'src/place_stats/place_stats.service';
-import { PlaceStats } from 'src/place_stats/Entity/place_stats.entity';
 
 @ApiTags('Place-review Api')
 @Controller('place-review')
@@ -39,6 +39,8 @@ export class PlaceReviewController {
     private readonly reviewMoodService: ReviewMoodService,
     private readonly placeStatsService: PlaceStatsService,
   ) {}
+
+  @Version('1')
   @ApiOperation({ summary: 'findAll Review', description: 'Get Place Reviews' })
   @ApiParam({ name: 'placeId', description: 'UUID', type: String })
   @ApiResponse({
@@ -52,6 +54,7 @@ export class PlaceReviewController {
     return this.placeReviewService.findByPlaceId(placeId);
   }
 
+  @Version('1')
   @ApiOperation({ summary: ' findOne', description: 'Get Review' })
   @ApiParam({ name: 'id', description: 'UUID', type: String })
   @ApiResponse({
@@ -64,6 +67,7 @@ export class PlaceReviewController {
     return this.placeReviewService.findById(id);
   }
 
+  @Version('1')
   @ApiOperation({ summary: 'createReview', description: 'createReview' })
   @ApiHeader({ name: 'Authorization', description: 'auth token' })
   @ApiBody({
@@ -137,6 +141,7 @@ export class PlaceReviewController {
     return result;
   }
 
+  @Version('1')
   @ApiOperation({
     summary: 'Get my Review List',
     description: '내가 가본 곳 목록 Result',
