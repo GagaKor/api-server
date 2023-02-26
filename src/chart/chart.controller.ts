@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Version } from '@nestjs/common';
 import { PlaceService } from 'src/place/place.service';
 import { ChartService } from './chart.service';
 
@@ -9,6 +9,7 @@ export class ChartController {
     private readonly placeService: PlaceService,
   ) {}
 
+  @Version('1')
   @Get('/:chartName')
   async getChartByName(@Param('chartName') chartName) {
     const placeIdList = await this.chartService.findPlaceIdListByName(
