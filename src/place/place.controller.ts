@@ -5,8 +5,8 @@ import {
   Post,
   Param,
   NotFoundException,
-  Query,
   Version,
+  Req,
 } from '@nestjs/common';
 import {
   ApiCreatedResponse,
@@ -16,6 +16,7 @@ import {
   ApiResponse,
   ApiQuery,
 } from '@nestjs/swagger';
+import { Request } from 'express';
 import { PlaceService } from './place.service';
 import { PlaceInfoService } from './placeInfo.service';
 import { AddPlace } from './dto/addPlace.dto';
@@ -25,15 +26,14 @@ import { PlaceInfo } from './Entity/placeInfo.entity';
 import { GetAllPlace } from './types/getAllPlace.type';
 import { GetPlaceDetail } from './types/getPlaceDetail.type';
 import { GetPlaceSearch } from './types/getPlaceSearch.type';
-import { SearchCountService } from '../search_count/search_count.service';
+// import { SearchCountService } from '../search_count/search_count.service';
 
 @ApiTags('Place Api')
 @Controller('place')
 export class PlaceController {
   constructor(
     private readonly placeService: PlaceService,
-    private readonly placeInfoService: PlaceInfoService,
-    private readonly searchCountService: SearchCountService,
+    private readonly placeInfoService: PlaceInfoService, // private readonly searchCountService: SearchCountService,
   ) {}
 
   @Version('1')
@@ -180,12 +180,12 @@ export class PlaceController {
     isArray: true,
   })
   @Get('/keyword')
-  async KeywwordSearch(
-    @Query('keyword') keyword: string,
-  ): Promise<GetPlaceSearch[]> {
-    await this.searchCountService.updateSearchCount('search');
-    const parseKeyword = this.placeService.parseKeyword(keyword);
-    return await this.placeService.placeKeywordSearch(parseKeyword);
+  async KeywwordSearch(@Req() request: Request): Promise<GetPlaceSearch[]> {
+    // await this.searchCountService.updateSearchCount('search');
+    const parseKeyword = this.placeService.parseKeyword(request.query);
+    const ret = await this.placeService.placeKeywordSearch(parseKeyword);
+
+    return ret;
   }
 
   @Version('1')
