@@ -6,6 +6,7 @@ import { SearchCountController } from './search_count.controller';
 
 @Module({
   imports: [TypeOrmModule.forFeature([SearchCount])],
+  exports: [SearchCountService],
   providers: [SearchCountService],
   controllers: [SearchCountController],
 })
