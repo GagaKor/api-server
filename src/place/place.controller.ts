@@ -26,14 +26,15 @@ import { PlaceInfo } from './Entity/placeInfo.entity';
 import { GetAllPlace } from './types/getAllPlace.type';
 import { GetPlaceDetail } from './types/getPlaceDetail.type';
 import { GetPlaceSearch } from './types/getPlaceSearch.type';
-// import { SearchCountService } from '../search_count/search_count.service';
+import { SearchCountService } from '../search_count/search_count.service';
 
 @ApiTags('Place Api')
 @Controller('place')
 export class PlaceController {
   constructor(
     private readonly placeService: PlaceService,
-    private readonly placeInfoService: PlaceInfoService, // private readonly searchCountService: SearchCountService,
+    private readonly placeInfoService: PlaceInfoService,
+    private readonly searchCountService: SearchCountService,
   ) {}
 
   @Version('1')
@@ -181,7 +182,7 @@ export class PlaceController {
   })
   @Get('/keyword')
   async KeywwordSearch(@Req() request: Request): Promise<GetPlaceSearch[]> {
-    // await this.searchCountService.updateSearchCount('search');
+    await this.searchCountService.updateSearchCount('search');
     const parseKeyword = this.placeService.parseKeyword(request.query);
     const ret = await this.placeService.placeKeywordSearch(parseKeyword);
 
