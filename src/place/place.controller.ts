@@ -136,13 +136,35 @@ export class PlaceController {
     description: 'Get Place Details',
     type: GetPlaceDetail,
   })
-  async getPlaceDetailsByKakaoID(
-    @Param('id') id: string,
-  ): Promise<GetPlaceDetail> {
+  async getPlaceDetailsById(@Param('id') id: string): Promise<GetPlaceDetail> {
     const place = await this.placeService.isExistsById(id);
     if (!place) return;
 
     return await this.placeService.findPlaceDetail(id);
+  }
+
+  @Version('1')
+  @Get('/detail/kakao/:id')
+  @ApiOperation({
+    summary: 'Get Place Details By Kakao Id',
+    description: '장소 상세 정보',
+  })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    type: String,
+  })
+  @ApiResponse({
+    description: 'Get Place Details By Kakao Id',
+    type: GetPlaceDetail,
+  })
+  async getPlaceDetailsByKakaoId(
+    @Param('id') id: string,
+  ): Promise<GetPlaceDetail> {
+    const placeId = await this.placeService.isExistsByKakaoId(id);
+    if (!placeId) return;
+
+    return await this.placeService.findPlaceDetail(placeId);
   }
 
   @Version('1')
