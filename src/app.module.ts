@@ -13,6 +13,7 @@ import { ReviewMoodModule } from './review_mood/review_mood.module';
 import { LoggerMiddleware } from './utils/logger.middleware';
 import { PlaceStatsModule } from './place_stats/place.stats.module';
 import { ChartModule } from './chart/chart.module';
+import { SearchCountModule } from './search_count/search_count.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { ChartModule } from './chart/chart.module';
     ReviewMoodModule,
     PlaceStatsModule,
     ChartModule,
+    SearchCountModule,
   ],
   controllers: [AppController],
   providers: [AppService, Logger],

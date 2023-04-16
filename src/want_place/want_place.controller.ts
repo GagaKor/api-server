@@ -7,6 +7,7 @@ import {
   ConflictException,
   Delete,
   Param,
+  Version,
 } from '@nestjs/common';
 import { GetUser } from 'src/decorator/get-user.decorator';
 import { WantPlaceService } from './want_place.service';
@@ -33,6 +34,7 @@ export class WantPlaceController {
     private readonly placeService: PlaceService,
   ) {}
 
+  @Version('1')
   @ApiOperation({
     summary: 'Get my WantPlaces',
     description: 'Get my WanPlace List',
@@ -50,6 +52,7 @@ export class WantPlaceController {
     return this.wantPlaceService.findByUser(user);
   }
 
+  @Version('1')
   @ApiOperation({
     summary: 'getCountByPlaceId',
     description: '장소 가고싶은 곳 등록 횟수',
@@ -60,6 +63,7 @@ export class WantPlaceController {
     return this.wantPlaceService.getCountByPlaceId(placeId);
   }
 
+  @Version('1')
   @ApiOperation({ summary: 'createWantPlace', description: 'createWantPlace' })
   @ApiHeader({ name: 'Authorization', description: 'auth token' })
   @ApiBody({
@@ -90,6 +94,7 @@ export class WantPlaceController {
     return this.wantPlaceService.createWantPlace(place, user);
   }
 
+  @Version('1')
   @ApiOperation({ summary: 'deleteWantPlace', description: 'deleteWantPlace' })
   @ApiHeader({ name: 'Authorization', description: 'auth token' })
   @ApiBody({

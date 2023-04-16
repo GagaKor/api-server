@@ -5,7 +5,8 @@ import {
   Post,
   Param,
   NotFoundException,
-  Query,
+  Version,
+  Req,
 } from '@nestjs/common';
 import {
   ApiCreatedResponse,
@@ -15,6 +16,7 @@ import {
   ApiResponse,
   ApiQuery,
 } from '@nestjs/swagger';
+import { Request } from 'express';
 import { PlaceService } from './place.service';
 import { PlaceInfoService } from './placeInfo.service';
 import { AddPlace } from './dto/addPlace.dto';
@@ -24,6 +26,7 @@ import { PlaceInfo } from './Entity/placeInfo.entity';
 import { GetAllPlace } from './types/getAllPlace.type';
 import { GetPlaceDetail } from './types/getPlaceDetail.type';
 import { GetPlaceSearch } from './types/getPlaceSearch.type';
+import { SearchCountService } from '../search_count/search_count.service';
 
 @ApiTags('Place Api')
 @Controller('place')
@@ -31,8 +34,10 @@ export class PlaceController {
   constructor(
     private readonly placeService: PlaceService,
     private readonly placeInfoService: PlaceInfoService,
+    private readonly searchCountService: SearchCountService,
   ) {}
 
+  @Version('1')
   @Get('/exists/:kakaoId')
   @ApiOperation({
     summary: 'isExists',
@@ -58,11 +63,13 @@ export class PlaceController {
     };
   }
 
+  @Version('1')
   @Get('/')
   async findByAll(): Promise<Place[]> {
     return await this.placeService.findAll();
   }
 
+  @Version('1')
   @Post('/')
   @ApiOperation({ summary: 'Create', description: 'create place data' })
   @ApiResponse({
@@ -79,6 +86,7 @@ export class PlaceController {
     return place;
   }
 
+  @Version('1')
   @Get('/info/:id')
   @ApiOperation({ summary: 'GetPlaceInfo', description: '장소 상세 정보 조회' })
   @ApiParam({
@@ -96,6 +104,7 @@ export class PlaceController {
     return placeInfo;
   }
 
+  @Version('1')
   @Get('/reviewed')
   @ApiOperation({
     summary: 'GetPlaces',
@@ -112,6 +121,7 @@ export class PlaceController {
     return places;
   }
 
+  @Version('1')
   @Get('/detail/:id')
   @ApiOperation({
     summary: 'Get Place Details',
@@ -126,15 +136,38 @@ export class PlaceController {
     description: 'Get Place Details',
     type: GetPlaceDetail,
   })
-  async getPlaceDetailsByKakaoID(
-    @Param('id') id: string,
-  ): Promise<GetPlaceDetail> {
+  async getPlaceDetailsById(@Param('id') id: string): Promise<GetPlaceDetail> {
     const place = await this.placeService.isExistsById(id);
     if (!place) return;
 
     return await this.placeService.findPlaceDetail(id);
   }
 
+  @Version('1')
+  @Get('/detail/kakao/:id')
+  @ApiOperation({
+    summary: 'Get Place Details By Kakao Id',
+    description: '장소 상세 정보',
+  })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    type: String,
+  })
+  @ApiResponse({
+    description: 'Get Place Details By Kakao Id',
+    type: GetPlaceDetail,
+  })
+  async getPlaceDetailsByKakaoId(
+    @Param('id') id: string,
+  ): Promise<GetPlaceDetail> {
+    const placeId = await this.placeService.isExistsByKakaoId(id);
+    if (!placeId) return;
+
+    return await this.placeService.findPlaceDetail(placeId);
+  }
+
+  @Version('1')
   @Get('/search/:kakaoId')
   @ApiOperation({
     summary: 'Get Place Search',
@@ -159,6 +192,7 @@ export class PlaceController {
     return result;
   }
 
+  @Version('1')
   @ApiOperation({
     summary: 'Keyword Search',
     description: '키워드 검색 qs 파싱후 전달',
@@ -169,13 +203,15 @@ export class PlaceController {
     isArray: true,
   })
   @Get('/keyword')
-  async KeywwordSearch(
-    @Query('keyword') keyword: string,
-  ): Promise<GetPlaceSearch[]> {
-    const parseKeyword = this.placeService.parseKeyword(keyword);
-    return await this.placeService.placeKeywordSearch(parseKeyword);
+  async KeywwordSearch(@Req() request: Request): Promise<GetPlaceSearch[]> {
+    await this.searchCountService.updateSearchCount('search');
+    const parseKeyword = this.placeService.parseKeyword(request.query);
+    const ret = await this.placeService.placeKeywordSearch(parseKeyword);
+
+    return ret;
   }
 
+  @Version('1')
   @Get('/:kakaoId')
   async findByKakaoId(@Param('kakaoId') kakaoId: string) {
     const isExists = await this.placeService.isExistsByKakaoId(kakaoId);
