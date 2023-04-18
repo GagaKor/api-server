@@ -158,4 +158,9 @@ export class PlaceReviewController {
   async findByUser(@GetUser() user: User) {
     return this.placeReviewService.findByUser(user);
   }
+
+  @Get('reivewbyplace/:placeId')
+  async reviewByPlace(@Param('placeId') placeId: string) {
+    return this.placeReviewService.reviewByPlaceId(placeId);
+  }
 }

@@ -135,4 +135,24 @@ export class PlaceReviewService {
       order: { createdAt: 'DESC' },
     });
   }
+
+  async reviewByPlaceId(placeId: string): Promise<PlaceReview[]> {
+    return this.placeReviewRepository.find({
+      select: {
+        simple_review: true,
+        rating: true,
+        createdAt: true,
+        user: { nickname: true },
+      },
+      relations: {
+        user: true,
+      },
+      where: {
+        place: {
+          id: placeId,
+        },
+      },
+      order: { createdAt: 'DESC' },
+    });
+  }
 }
